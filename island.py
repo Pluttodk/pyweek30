@@ -3,6 +3,7 @@ from tree import Tree
 import pygame as pg
 import random
 import numpy as np
+from house import House
 
 class Island:
     background_color = (0,0,200)
@@ -19,7 +20,7 @@ class Island:
         self.trees = random.randint(level,level+4)
         for _ in range(self.trees):
             self.items.append(Tree())
-
+        self.items.append(House())
     
     def draw(self):
         #Water

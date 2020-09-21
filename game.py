@@ -20,7 +20,10 @@ while(True):
             island = Island(screen, [])
         else:
             island.work(key.key)
-        island.draw() 
+    elif key.type == KEYUP:
+        if key.key == K_a or key.key == K_d:
+            island.villager.stop()
+    island.draw() 
     pg.display.flip()
 
 #Exit everything

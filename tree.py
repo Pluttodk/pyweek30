@@ -8,7 +8,7 @@ class Tree:
         self.life = random.randint(30,100)
         self.start_x = random.randint(100, 900)
     
-    def chop(self):
+    def work(self):
         if self.life > 0:
             self.life -= 1
     
