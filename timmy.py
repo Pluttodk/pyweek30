@@ -1,7 +1,9 @@
 from pygame.locals import *
 import pygame as pg
 from house import House
+from raft import Raft
 from tree import Tree
+import variables
 class Timmy:
     """
     Timmy will be our survivor, 
@@ -10,14 +12,14 @@ class Timmy:
     """
     def __init__(self):
         self.tools = []
-        self.stamina = 10
-        self.x = 200
-        self.y = 420
+        self.stamina = variables.TIMMY_STAMINA
+        variables.CURRENT_STAMINA = self.stamina
+        self.x,self.y = variables.TIMMY_CENTER
         self.color = (0,0,0)
         self.movement_speed = 0
+        self.acceleration = 3
         self.info = ""
-        self.font = pg.font.SysFont("comicsansms", 50)
-        self.ressources = 0
+        variables.CURRENT_RESSOURCES = 0
     
     def upgrade_tools(self, tools):
         self.tools = tools
@@ -28,24 +30,27 @@ class Timmy:
                 #chop trees on island:
                 if self.stamina > 0:
                     self.stamina -= 1
+                    variables.CURRENT_STAMINA = self.stamina
                     item.work()
-                    self.ressources += 1
+                    variables.CURRENT_RESSOURCES += 1
         if press == K_s:
             if isinstance(item, House):
                 #Sleep:
-                self.stamina = 10
+                self.stamina = variables.TIMMY_STAMINA
             else:
-                text = self.font.render(f"You can only sleep in house", True, (255,10,10))
-                self.screen.blit(text, (0,0))
-                print("you can only sleep in the house")
-                #Blit does not work right now. Figure out later why
+                print("You can only sleep in the house")
+                # variables.DRAW_TEXT(self.screen, "You can only sleep in the house", (200,10,10))
         elif press == K_a:
-            self.movement_speed = -5
+            self.movement_speed = -self.acceleration
         elif press == K_d:
-            self.movement_speed = 5
+            self.movement_speed = self.acceleration
         elif press == K_b and isinstance(item, House):
-            if item.build_raft(self.ressources):
-                self.ressources -= 10
+            if item.build_raft(variables.CURRENT_RESSOURCES):
+                variables.CURRENT_RESSOURCES -= 10
+        elif press == K_e:
+            print(item)
+            #SAIL MY BODY
+            print("SAILING!!!")
     def stop(self):
         self.movement_speed = 0
     
@@ -54,7 +59,10 @@ class Timmy:
 
     def draw(self, screen):
         self.screen = screen
-        text = self.font.render(f"Timmy's stamina: {self.stamina}", True, (255,255,255))
-        self.screen.blit(text, (0,0))
         pg.draw.circle(screen, (0,0,0), (self.x, self.y), 20)
+        if self.x >= variables.ISLAND_CENTER[0]+(variables.ISLAND_WIDTH//2)+(variables.RAFT_WIDTH*variables.RAFT_PIECES) or self.x <= variables.ISLAND_CENTER[0]-(variables.ISLAND_WIDTH//2):
+            self.x = variables.TIMMY_CENTER[0]
+            self.stamina -= 5
+            variables.CURRENT_STAMINA = self.stamina
+            self.stop()
         self.x += self.movement_speed

@@ -2,13 +2,15 @@ import pygame as pg
 from pygame.locals import *
 from island import Island
 from tree import Tree
+import variables
 
 pg.init()
 
-screen = pg.display.set_mode((1000,500))
+screen = pg.display.set_mode((variables.SCREEN_WIDTH,500))
 
 island = Island(screen, [])
 island.draw()
+variables.SCREEN = screen
 #Game loop
 while(True):
     key = pg.event.poll()
