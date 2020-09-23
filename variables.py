@@ -16,17 +16,19 @@ RAFT_SPACING = 1
 RAFT_MIN_SIZE = 4
 
 RANGE = 20
-SCREEN_WIDTH = 1000
+SCREEN_WIDTH = 1200
 
 
 CURRENT_STAMINA = TIMMY_STAMINA
 CURRENT_RESSOURCES = 0
 DAY = 0
+LEVEL = 1
 
 def DRAW_TEXT(screen, info="", color=(255,255,255)):
     font = pg.font.SysFont("comicsansms", 50)
     if not len(info):
-        text = font.render(f"Timmy's stamina: {CURRENT_STAMINA}, Ressources: {CURRENT_RESSOURCES}, Day: {DAY}, Boat: {RAFT_PIECES}/{RAFT_MIN_SIZE}", True, (255,255,255), (0,0,0))
+        text = font.render(f"Timmy's stamina: {CURRENT_STAMINA}, Ressources: {CURRENT_RESSOURCES}, Day: {DAY}, Boat: {RAFT_PIECES}/{RAFT_MIN_SIZE}, Level: {LEVEL}", True, (255,255,255), (0,0,0))
+        screen.blit(text, (0,0))
     else:
         text = font.render(info, True, color, (0,0,0))
-    screen.blit(text, (0,0))
+        screen.blit(text, (600,0))

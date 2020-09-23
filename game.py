@@ -14,7 +14,7 @@ variables.SCREEN = screen
 #Game loop
 while(True):
     key = pg.event.poll()
-
+    start_level = variables.LEVEL
     if key.type == KEYDOWN:
         if key.key == K_q:
             break
@@ -25,6 +25,8 @@ while(True):
     elif key.type == KEYUP:
         if key.key == K_a or key.key == K_d:
             island.villager.stop()
+    if start_level != variables.LEVEL:
+        island = Island(screen, [], level=variables.LEVEL)
     island.draw() 
     pg.display.flip()
 

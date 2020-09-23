@@ -18,9 +18,10 @@ class Island:
         self.screen = screen
         self.items = items
                 
-        self.villager = Timmy()
+        self.villager = Timmy(self)
         # Number of trees
         self.trees = random.randint(level,level+4)
+        variables.RAFT_MIN_SIZE = level*4
         for _ in range(self.trees):
             self.items.append(Tree())
         self.items.append(House())
@@ -30,14 +31,18 @@ class Island:
             # For the first level, simply add the raft criteria to be 1
             self.raft_criteria = 4
 
-    def draw(self):
+    def draw(self, is_sailing=False):
         #Water
         self.screen.fill(self.background_color)
         #Island
         pg.draw.circle(self.screen, self.island_color, (500,500), variables.ISLAND_WIDTH//2)
         for i in self.items:
-            i.draw(self.screen)
-        self.villager.draw(self.screen)
+            if isinstance(i, House):
+                i.draw(self.screen, is_sailing)
+            else:
+                i.draw(self.screen)
+        if not is_sailing:
+            self.villager.draw(self.screen)
         variables.DRAW_TEXT(self.screen)
     
     def work(self, press):

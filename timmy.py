@@ -10,7 +10,7 @@ class Timmy:
     based on his tools this will impact how much wood he can chop,
     and how quickly he can build the raft
     """
-    def __init__(self):
+    def __init__(self, island):
         self.tools = []
         self.stamina = variables.TIMMY_STAMINA
         variables.CURRENT_STAMINA = self.stamina
@@ -19,6 +19,7 @@ class Timmy:
         self.movement_speed = 0
         self.acceleration = 3
         self.info = ""
+        self.island = island
         variables.CURRENT_RESSOURCES = 0
     
     def upgrade_tools(self, tools):
@@ -47,10 +48,11 @@ class Timmy:
         elif press == K_b and isinstance(item, House):
             if item.build_raft(variables.CURRENT_RESSOURCES):
                 variables.CURRENT_RESSOURCES -= 10
-        elif press == K_e:
-            print(item)
+        elif press == K_e and isinstance(item, Raft):
+            if variables.RAFT_PIECES >= variables.RAFT_MIN_SIZE:
+                draw_user_on_x = lambda screen, x: pg.draw.circle(screen, (0,0,0), (x, self.y), 20)
+                item.sail(draw_user_on_x, self.island)
             #SAIL MY BODY
-            print("SAILING!!!")
     def stop(self):
         self.movement_speed = 0
     
