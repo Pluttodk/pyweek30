@@ -10,7 +10,9 @@ import time
 
 class Island:
     background_color = (10,10,200)
+    background_image = "sprites/background.png"
     island_color = (255,137,0)
+    island_image = "sprites/islands.png"
 
     x, y = 200,200
 
@@ -26,16 +28,22 @@ class Island:
             self.items.append(Tree())
         self.items.append(House())
         variables.DAY = 0
-
+        self.bkg = pg.image.load(self.background_image)
+        self.isl = pg.image.load(self.island_image)
         if level == 1:
             # For the first level, simply add the raft criteria to be 1
             self.raft_criteria = 4
 
     def draw(self, is_sailing=False):
         #Water
-        self.screen.fill(self.background_color)
+        self.screen.blit(self.bkg, (0,0))
+        filt = pg.Surface((self.bkg.get_width(), self.bkg.get_height()), flags=pg.SRCALPHA)
+        filt.fill((255, 255, 255, 1))
         #Island
-        pg.draw.circle(self.screen, self.island_color, (500,500), variables.ISLAND_WIDTH//2)
+        # pg.draw.circle(self.screen, self.island_color, (500,500), variables.ISLAND_WIDTH//2)
+        self.isl = pg.transform.scale(self.isl, (variables.ISLAND_WIDTH, variables.ISLAND_WIDTH))
+        self.screen.blit(self.isl, (500-variables.ISLAND_WIDTH//2,500 -variables.ISLAND_WIDTH//2))
+
         for i in self.items:
             if isinstance(i, House):
                 i.draw(self.screen, is_sailing)
@@ -69,7 +77,11 @@ class Island:
             color = map(lambda x: 0 if x < 0 else (255 if x > 255 else x),color)
             color = tuple(color)
             #Water
-            self.screen.fill((color))
+            filt = pg.Surface((self.bkg.get_width(), self.bkg.get_height()), flags=pg.SRCALPHA)
+            filt.fill((255, 255, 255, v))
+            self.screen.blit(self.bkg, (0,0))
+            self.screen.blit(filt, (0, 0))
+            # self.screen.fill((color))
 
             
             sun_x = int(variables.SCREEN_WIDTH * (i/190))
@@ -82,15 +94,16 @@ class Island:
             # Used to create paraboula based on width and height
             y = int(-(a*(((i/200)*1000)-c)**2)+b)
             sun_y = abs((b+sun_width)-y)
-            pg.draw.circle(self.screen, sun_color, (sun_x, sun_y), sun_width)
             
+            self.isl = pg.transform.scale(self.isl, (variables.ISLAND_WIDTH, variables.ISLAND_WIDTH))
+            self.screen.blit(self.isl, (500-variables.ISLAND_WIDTH//2,500 -variables.ISLAND_WIDTH//2))
 
             #Island
-            pg.draw.circle(self.screen, self.island_color, (500,500), variables.ISLAND_WIDTH//2)
+            # pg.draw.circle(self.screen, self.island_color, (500,500), variables.ISLAND_WIDTH//2)
             for j in self.items:
                 j.draw(self.screen)
             self.villager.draw(self.screen)
-
+            pg.draw.circle(self.screen, sun_color, (sun_x, sun_y), sun_width)
             pg.time.delay(10)
             pg.display.flip()
         variables.DAY += 1

@@ -10,6 +10,8 @@ class Tree:
         low_x = variables.ISLAND_CENTER[0]-int(variables.ISLAND_WIDTH//2*0.8)
         high_x = variables.ISLAND_CENTER[0]+int(variables.ISLAND_WIDTH//2*0.8)
         self.x = random.randint(low_x, high_x)
+        self.texture = pg.image.load("sprites/tree2.png")
+        self.tree_top = pg.image.load("sprites/tree_top.png")
     
     def work(self):
         if self.life > 0:
@@ -19,12 +21,14 @@ class Tree:
         x = self.x
         y = self.start_y
         for i in range(self.life):
-            y -= 3
-            width = 10
-            height = 3
-            pg.draw.rect(screen, self.color, (x,y,width, height))
-        y -= 3
-        pg.draw.circle(screen, (0,200,0), (x+6,y), 10)
+            y -= 5
+            width = 30
+            height = 5
+            screen.blit(self.texture, (x,y))
+            # pg.draw.rect(screen, self.color, (x,y,width, height))
+        y -= 40
+        screen.blit(self.tree_top, (x-10,y))
+        # pg.draw.circle(screen, (0,200,0), (x+6,y), 10)
     
     def get_pos(self):
         return (self.x, self.start_y)

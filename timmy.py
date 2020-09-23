@@ -57,7 +57,7 @@ class Timmy:
                 variables.CURRENT_RESSOURCES -= 10
         elif press == K_e and isinstance(item, Raft):
             if variables.RAFT_PIECES >= variables.RAFT_MIN_SIZE:
-                draw_user_on_x = lambda screen, x: pg.draw.circle(screen, (0,0,0), (x, self.y), 20)
+                draw_user_on_x = lambda screen, x: self.screen.blit(self.timmy_sprite, (x, self.y), self.movement_sprite)
                 item.sail(draw_user_on_x, self.island)
             #SAIL MY BODY
     def stop(self):
