@@ -6,7 +6,7 @@ class Tree:
     start_y = 400
     color = (255, 213, 0)
     def __init__(self):
-        self.life = random.randint(30,100)
+        self.life = random.randint(10,15)
         low_x = variables.ISLAND_CENTER[0]-int(variables.ISLAND_WIDTH//2*0.8)
         high_x = variables.ISLAND_CENTER[0]+int(variables.ISLAND_WIDTH//2*0.8)
         self.x = random.randint(low_x, high_x)
