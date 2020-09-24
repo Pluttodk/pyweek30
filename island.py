@@ -27,7 +27,7 @@ class Island:
         for _ in range(self.trees):
             self.items.append(Tree())
         self.items.append(House())
-        variables.DAY = 0
+        variables.DAY = 1
         self.bkg = pg.image.load(self.background_image)
         self.isl = pg.image.load(self.island_image)
         if level == 1:
@@ -106,6 +106,7 @@ class Island:
             pg.draw.circle(self.screen, sun_color, (sun_x, sun_y), sun_width)
             pg.time.delay(10)
             pg.display.flip()
+        variables.ISLAND_WIDTH -= 200
         variables.DAY += 1
     
     

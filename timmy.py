@@ -42,7 +42,10 @@ class Timmy:
         if press == K_s:
             if isinstance(item, House):
                 #Sleep:
+                self.movement_speed = 0
                 self.stamina = variables.TIMMY_STAMINA
+                variables.CURRENT_STAMINA = self.stamina
+                variables.DRAW_TEXT(self.screen)
             else:
                 print("You can only sleep in the house")
                 # variables.DRAW_TEXT(self.screen, "You can only sleep in the house", (200,10,10))
