@@ -7,7 +7,7 @@ class Raft:
     def __init__(self):
         self.pieces = 0
         variables.RAFT_PIECES = 0
-        self.x, self.y = variables.RAFT_LOCATION
+        self.x, self.y = (variables.ISLAND_CENTER[0] + variables.ISLAND_WIDTH//2,400)
         self.width = variables.RAFT_WIDTH
         self.height = variables.RAFT_HEIGHT
     def work(self):
