@@ -1,9 +1,10 @@
 import pygame as pg
 ISLAND_WIDTH = 800
 ISLAND_CENTER = (500,500)
+ISLAND_DECAY = 60
 
 TIMMY_CENTER = (400,370)
-TIMMY_STAMINA = 20
+TIMMY_STAMINA = 30
 
 HOUSE_CENTER = (500,300)
 
@@ -25,6 +26,11 @@ CURRENT_RESSOURCES = 0
 DAY = 1
 LEVEL = 1
 
+LEVEL_RAFT = [4,8,12,16] # Leaving for a total number of ress = 400
+LEVEL_TREES = [6,4,2,1]
+LEVEL_TREES_RESSOURCES = [200,80,60,50] # The number of trees ressources to be available from the begining (This will mean that you will have to farm all at first level. Even though that grows during night)
+LEVEL_ISLAND_SIZE = [800,600,400,200]
+
 FRAME_COUNT = 0
 
 STAMINA_BAR = pg.image.load("sprites/stamina_outline.png")
@@ -36,13 +42,14 @@ _circle_cache = {}
 
 def DRAW_TEXT(screen, info="", color=TEXT_COLOR):
     font = pg.font.SysFont(None, 30)
+    font2 = pg.font.SysFont(None, 25)
     if not len(info):
         stamina = render(f"Stamina", font, TEXT_COLOR)
         # stamina = font.render(f"Stamina", True, TEXT_COLOR)
         ressources = render(f"{CURRENT_RESSOURCES}", font, TEXT_COLOR)
         day = render(f"Day: {DAY}", font, TEXT_COLOR)
         boat = render(f"Boat: {RAFT_PIECES}/{RAFT_MIN_SIZE} ", font, TEXT_COLOR)
-        level = render(f"Level: {LEVEL}", font, TEXT_COLOR)
+        level = render(f"Island: {LEVEL}", font2, TEXT_COLOR)
 
         screen.blit(BORDER, (0,0))
 

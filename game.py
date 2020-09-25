@@ -3,13 +3,15 @@ from pygame.locals import *
 from island import Island
 from tree import Tree
 import variables
+import random
+
+#TODO: Add sounds
 
 def play_game(screen):
     island = Island(screen, [])
     #Game loop
     while(True):
         key = pg.event.poll()
-        start_level = variables.LEVEL
         if key.type == KEYDOWN:
             if key.key == K_ESCAPE:
                 should_close, updated_data = pause_screen(screen)
@@ -17,20 +19,75 @@ def play_game(screen):
                     island = updated_data
                 if should_close:
                     return
-            elif key.key == K_r:
-                island = Island(screen, [])
             else:
-                island.work(key.key)
+                status = island.work(key.key)
+                if len(status):
+                    t = game_over_screen(screen, status)
+                    island.villager.stop()
+                    if t:
+                        return
+                    else:
+                        island = Island(screen, [])
         elif key.type == pg.QUIT:
             return
         elif key.type == KEYUP:
             if key.key == K_a or key.key == K_d:
                 island.villager.stop()
-        if start_level != variables.LEVEL:
-            island = Island(screen, [], level=variables.LEVEL)
         variables.FRAME_COUNT += 1
-        island.draw() 
+        status = island.draw() 
+        if len(status):
+            t = game_over_screen(screen, status)
+            island.villager.stop()
+            if t:
+                return
+            else:
+                island = Island(screen, [])
         pg.display.flip()
+
+def game_over_screen(screen, status):
+    hints = ["Remember to take as many ressources with you when sailing", "Trees grow at night. Sleep is a good thing"]
+    game_over = pg.image.load("sprites/game_over.png")
+    font_large = pg.font.SysFont(None, 75)
+    font = pg.font.SysFont(None, 30)
+    game_over_text = font_large.render("GAME OVER", True, (74,0,0))
+    survive_time = font.render(f"You survived {variables.DAY} day(s)", True, (74,0,0))
+    stat = font.render(status, True, (74,0,0))
+    progress = font.render(f"You reached the {variables.LEVEL} island", True, (74,0,0))
+    hint = font.render(f"HINT: {random.choice(hints)}", True, (74,0,0))
+    try_again = font.render("TRY AGAIN", True, (255,255,255))
+    ext = font.render("EXIT", True, (255,255,255))
+    buttons = [(try_again, False), (ext, True)]
+    padding = 30
+    while(True):
+        mouse = pg.mouse.get_pos()
+        click = pg.mouse.get_pressed()
+        key = pg.event.poll()
+        screen.blit(game_over, (0,0))
+        screen.blit(game_over_text, (variables.SCREEN_WIDTH//2-game_over_text.get_rect().width//2, padding))
+        y = game_over_text.get_rect().height
+        screen.blit(stat, (variables.SCREEN_WIDTH//2-stat.get_rect().width//2,y+padding))
+        y += padding + stat.get_rect().height
+        screen.blit(survive_time, (variables.SCREEN_WIDTH//2-survive_time.get_rect().width//2,y+padding))
+        y += padding + survive_time.get_rect().height
+        screen.blit(progress, (variables.SCREEN_WIDTH//2-progress.get_rect().width//2,y+padding))
+        y += padding + progress.get_rect().height
+        screen.blit(hint, (variables.SCREEN_WIDTH//2-hint.get_rect().width//2,y+padding))
+        y += padding + hint.get_rect().height + padding
+        for t,action in buttons:
+            center = variables.SCREEN_WIDTH//2
+            color = (74,0,0) if not (center+100 >= mouse[0] >= center-100 and y+60 >= mouse[1] >= y)  else ((84,0,0) if not click[0] else (64,0,0))
+            pg.draw.rect(screen, color,  (variables.SCREEN_WIDTH//2-100, y, 200, 60))
+            screen.blit(t, (variables.SCREEN_WIDTH//2-t.get_rect().width//2, y+30-t.get_rect().height//2))
+            y += 60+padding
+            if color == (64,0,0):
+                pg.display.flip()
+                pg.time.wait(100)
+                return action
+        if key.type == pg.QUIT:
+            return True
+        pg.display.flip()
+    return False
+    #TODO: Make game over scene
 
 def start_screen(screen):
     while(True):
@@ -110,9 +167,9 @@ def pause_screen(screen):
                 return action()
             y += 60 + padding
         if key.type == KEYDOWN and (key.key == K_ESCAPE):
-            return False
+            return (False, None)
         elif key.type == pg.QUIT:
-            return True
+            return (True, None)
         pg.display.flip()
 
 def settings_screen(screen, is_paused=False):
@@ -179,6 +236,7 @@ def settings_screen(screen, is_paused=False):
 
 
 pg.init()
+pg.display.set_caption('Lonely Timmy')
 
 screen = pg.display.set_mode((variables.SCREEN_WIDTH,variables.SCREEN_HEIGHT))
 

@@ -16,15 +16,10 @@ class Raft:
 
     def draw(self, screen):
         self.screen = screen
-        for i in range(0,self.pieces,4):
-            vertical = i%2
-            stop = 4 if i+4 <= self.pieces else self.pieces
-            for j in range(stop):
-                x = self.x + (variables.RAFT_WIDTH+variables.RAFT_SPACING)*j
-                if not vertical:
-                    pg.draw.rect(screen, self.color, (x, self.y, self.width, self.height))
-                else:
-                    pg.draw.rect(screen, self.color, (x, self.y, self.height, self.width))
+        self.x, self.y = (variables.ISLAND_CENTER[0] + variables.ISLAND_WIDTH//2,400)
+        for i in range(0,self.pieces):
+            x = self.x + (variables.RAFT_WIDTH+variables.RAFT_SPACING)*i
+            pg.draw.rect(screen, self.color, (x, self.y, self.width, self.height))
         
     def can_sail(self, criteria):
         return self.pieces >= criteria
@@ -48,3 +43,4 @@ class Raft:
             pg.time.delay(10)
             pg.display.flip()
         variables.LEVEL += 1
+        island.new_level()

@@ -7,6 +7,7 @@ import numpy as np
 import variables
 from house import House
 import time
+import numpy as np
 
 class Island:
     background_color = (10,10,200)
@@ -15,24 +16,39 @@ class Island:
     island_image = "sprites/islands.png"
 
     x, y = 200,200
-
+    
     def __init__(self, screen, items, level=1):
         self.screen = screen
         self.items = items
-                
+        variables.DAY = 1
+        variables.LEVEL = 1
         self.villager = Timmy(self)
         # Number of trees
-        self.trees = random.randint(level,level+4)
-        variables.RAFT_MIN_SIZE = level*4
-        for _ in range(self.trees):
-            self.items.append(Tree())
+        # This will ensure that the sum will always be the same for each run
+        self.new_level()
+
+    def new_level(self):
+        self.items = []
+        variables.ISLAND_WIDTH = variables.LEVEL_ISLAND_SIZE[variables.LEVEL-1]
+        if variables.LEVEL == 1:
+            n = np.random.randint(5,15)
+        else:
+            n = variables.LEVEL_TREES_RESSOURCES[variables.LEVEL-1] // 10
+        sizes = np.random.multinomial(variables.LEVEL_TREES_RESSOURCES[variables.LEVEL-1], np.ones(n)/n, size=1)[0]
+        part1_trees = np.linspace(variables.ISLAND_WIDTH//2-variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//3, variables.ISLAND_CENTER[0]-100, n//2)
+        part2_trees = np.linspace(variables.ISLAND_CENTER[0]+100, variables.ISLAND_WIDTH//2+variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//10, n//2)
+        trees_pos = np.hstack((part1_trees,part2_trees))
+        for s,x in zip(sizes, trees_pos):
+            self.items.append(Tree(s, x))
         self.items.append(House())
-        variables.DAY = 1
+        if variables.LEVEL == 5:
+            #This will be the end. so play the end screen
+            #TODO: Make the final level screen
+            ...
         self.bkg = pg.image.load(self.background_image)
         self.isl = pg.image.load(self.island_image)
-        if level == 1:
-            # For the first level, simply add the raft criteria to be 1
-            self.raft_criteria = 4
+        variables.RAFT_MIN_SIZE = variables.LEVEL_RAFT[variables.LEVEL-1]
+
 
     def draw(self, is_sailing=False):
         #Water
@@ -50,12 +66,16 @@ class Island:
             else:
                 i.draw(self.screen)
         if not is_sailing:
-            self.villager.draw(self.screen)
+            mess = self.villager.draw(self.screen)
+            if len(mess):
+                return mess
         variables.DRAW_TEXT(self.screen)
+        return ""
     
     def work(self, press):
         x,y = self.villager.get_pos()
         has_worked = False
+        contains_tree = False
         for i in self.items:
             if i.is_dead():
                 self.items.remove(i)
@@ -66,11 +86,16 @@ class Island:
                     if isinstance(obj, House) and press == K_s:
                         self.sleep()
                     has_worked = True
+                if isinstance(i, Tree):
+                    contains_tree = True
         if not has_worked:
             self.villager.work(press)
+        if not contains_tree and (variables.CURRENT_RESSOURCES < variables.RAFT_COST or variables.RAFT_PIECES < variables.RAFT_MIN_SIZE):
+            return "No more trees left. Plan your ressources more cautios"
+        return ""
     
     def sleep(self):
-        cycle = np.hstack((np.linspace(1,100,100),np.linspace(100,1,100)))
+        cycle = np.hstack((np.linspace(51,150,150),np.linspace(150,51,150)))
         for i,v in enumerate(cycle):
             color = np.asarray(self.background_color)
             color += int(v)
@@ -78,14 +103,13 @@ class Island:
             color = tuple(color)
             #Water
             filt = pg.Surface((self.bkg.get_width(), self.bkg.get_height()), flags=pg.SRCALPHA)
-            filt.fill((255, 255, 255, v))
+            filt.fill((0,0,0, v))
             self.screen.blit(self.bkg, (0,0))
-            self.screen.blit(filt, (0, 0))
             # self.screen.fill((color))
 
             
             sun_x = int(variables.SCREEN_WIDTH * (i/190))
-            sun_color = (255,255,0)
+            sun_color = (150,150,150)
             sun_width = 40
             c = 1000/2
             b = 600
@@ -104,9 +128,17 @@ class Island:
                 j.draw(self.screen)
             self.villager.draw(self.screen)
             pg.draw.circle(self.screen, sun_color, (sun_x, sun_y), sun_width)
-            pg.time.delay(10)
+            self.screen.blit(filt, (0, 0))
+
+            pg.time.delay(5)
             pg.display.flip()
-        variables.ISLAND_WIDTH -= 200
+        variables.ISLAND_WIDTH -= variables.ISLAND_DECAY
+        for i in self.items:
+            x,_ = i.get_pos()
+            if variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//2 >= x >= variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//2:
+                i.life += random.randint(1,4)
+            else:
+                i.life = 0
         variables.DAY += 1
     
     

@@ -13,6 +13,7 @@ class House:
         self.width = 50
         self.height = 50
         self.raft = None
+        self.life = 0
         self.house_sprite = pg.image.load("sprites/house.png")
     
     def draw(self, screen, is_sailing=False):
@@ -45,7 +46,7 @@ class House:
             print("You need to chop more trees")
             return False
     def get_pos(self):
-        return (self.x, self.y)
+        return (self.x+self.house_sprite.get_rect().width//2, self.y+self.house_sprite.get_rect().height//2)
     
     def calc_nearest_object(self, x):
         diff = abs(x-self.x)

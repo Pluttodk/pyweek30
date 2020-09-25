@@ -49,26 +49,32 @@ class Timmy:
             else:
                 print("You can only sleep in the house")
                 # variables.DRAW_TEXT(self.screen, "You can only sleep in the house", (200,10,10))
-        elif press == K_a:
+        elif press == K_a or press == K_LEFT:
             self.movement_speed = -self.acceleration
             self.movement_sprite = (0,16*3*self.scale_factor,16*self.scale_factor,16*self.scale_factor)
-        elif press == K_d:
+        elif press == K_d or press == K_RIGHT:
             self.movement_speed = self.acceleration
             self.movement_sprite = (0,16*2*self.scale_factor,16*self.scale_factor,16*self.scale_factor)
         elif press == K_b and isinstance(item, House):
             if item.build_raft(variables.CURRENT_RESSOURCES):
-                variables.CURRENT_RESSOURCES -= 10
+                variables.CURRENT_RESSOURCES -= variables.RAFT_COST
         elif press == K_e and isinstance(item, Raft):
             if variables.RAFT_PIECES >= variables.RAFT_MIN_SIZE:
-                draw_user_on_x = lambda screen, x: self.screen.blit(self.timmy_sprite, (x, self.y), self.movement_sprite)
+                draw_user_on_x = lambda screen, x: self.screen.blit(self.timmy_sprite, (x-(self.scale_factor*16)//2, self.y), self.movement_sprite)
                 item.sail(draw_user_on_x, self.island)
+                self.x = variables.ISLAND_CENTER[0]
+                variables.RAFT_PIECES = 0
             #SAIL MY BODY
     def stop(self):
         self.movement_speed = 0
         self.movement_sprite = (0,0,16*self.scale_factor,16*self.scale_factor)
     
     def get_pos(self):
-        return (self.x, self.y)
+        return (self.x+(16*self.scale_factor)//2, self.y)
+
+    def die(self):
+        self.stamina = 0
+        variables.CURRENT_STAMINA = 0
 
     def draw(self, screen):
         self.screen = screen
@@ -80,8 +86,13 @@ class Timmy:
             self.x = variables.TIMMY_CENTER[0]
             self.stamina -= 5
             variables.CURRENT_STAMINA = self.stamina
+            if self.stamina <= 0:
+                self.die()
+                print("Watch out for the water. Timmy can only swim if he has Stamina")
+                return "Watch out for the water. Timmy can only swim if he has Stamina"
             self.stop()
         self.x += self.movement_speed
+        return ""
     
     def move(self):
         next_sprite = 16*self.scale_factor
