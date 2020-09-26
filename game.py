@@ -11,6 +11,7 @@ def play_game(screen):
     #Game loop
     sound = pg.mixer.Sound("sounds/background.wav")
     sound.play(-1)
+    sound.set_volume(0.3)
     while(True):
         key = pg.event.poll()
         if key.type == KEYDOWN:

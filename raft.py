@@ -25,8 +25,6 @@ class Raft:
         return self.pieces >= criteria
     
     def calc_nearest_object(self, x):
-        diff = abs(x-(self.x+(self.pieces*self.width)))
-        diff2 = abs(x-self.x)
         if self.x-variables.RANGE <= x <= (self.x+(self.pieces*self.width))+variables.RANGE and self.pieces > 0:
             return self
         else:
@@ -44,3 +42,4 @@ class Raft:
             pg.display.flip()
         variables.LEVEL += 1
         island.new_level()
+        

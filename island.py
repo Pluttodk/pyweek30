@@ -35,8 +35,8 @@ class Island:
         variables.ISLAND_WIDTH = variables.LEVEL_ISLAND_SIZE[variables.LEVEL-1]
         n = variables.LEVEL_TREES[variables.LEVEL-1]
         sizes = np.random.multinomial(variables.LEVEL_TREES_RESSOURCES[variables.LEVEL-1], np.ones(n)/n, size=1)[0]
-        part1_trees = np.linspace(variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//3, variables.ISLAND_CENTER[0]-100, n//2)
-        part2_trees = np.linspace(variables.ISLAND_CENTER[0]+100, variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//3, n//2)
+        part1_trees = np.linspace(variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//3, variables.ISLAND_CENTER[0]-50, n//2)
+        part2_trees = np.linspace(variables.ISLAND_CENTER[0]+50, variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//3, n//2)
         trees_pos = np.hstack((part1_trees,part2_trees))
         for s,x in zip(sizes, trees_pos):
             self.items.append(Tree(s, x))
@@ -73,13 +73,14 @@ class Island:
         x,y = self.villager.get_pos()
         has_worked = False
         contains_tree = False
+        sailing = False
         for i in self.items:
             if i.is_dead():
                 self.items.remove(i)
             else:
                 obj = i.calc_nearest_object(x)
                 if obj != None:
-                    self.villager.work(press, obj)
+                    sailing = self.villager.work(press, obj)
                     if isinstance(obj, House) and press == K_s:
                         self.sleep()
                     has_worked = True
@@ -87,7 +88,7 @@ class Island:
                     contains_tree = True
         if not has_worked:
             self.villager.work(press)
-        if not contains_tree and (variables.CURRENT_RESSOURCES < variables.RAFT_COST and variables.RAFT_PIECES < variables.RAFT_MIN_SIZE):
+        if not contains_tree and (variables.CURRENT_RESSOURCES < variables.RAFT_COST and variables.RAFT_PIECES < variables.RAFT_MIN_SIZE) and not sailing:
             return "No more trees left. Plan your ressources more cautios"
         return ""
     
@@ -129,11 +130,11 @@ class Island:
 
             pg.time.delay(3)
             pg.display.flip()
-        variables.ISLAND_WIDTH -= variables.ISLAND_DECAY
+        variables.ISLAND_WIDTH -= variables.ISLAND_DECAY if variables.ISLAND_WIDTH > 300 else 0
         for i in self.items:
             x,_ = i.get_pos()
             if variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//3 >= x >= variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//3:
-                i.life += random.randint(1,4)
+                i.life += random.randint(3,10)
             else:
                 i.life = 0
                 self.items.remove(i)

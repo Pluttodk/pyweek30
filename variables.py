@@ -31,6 +31,7 @@ LEVEL_TREES = [8,6,4,2]
 LEVEL_TREES_RESSOURCES = [200,120,80,50] # The number of trees ressources to be available from the begining (This will mean that you will have to farm all at first level. Even though that grows during night)
 LEVEL_ISLAND_SIZE = [800,600,400,300]
 
+
 FRAME_COUNT = 0
 
 STAMINA_BAR = pg.image.load("sprites/stamina_outline.png")

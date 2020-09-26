@@ -30,6 +30,7 @@ class Timmy:
         self.tools = tools
     
     def work(self, press, item  = None):
+        sailing = False
         if item != None:
             if press == K_SPACE and isinstance(item, Tree):
                 #chop trees on island:
@@ -43,6 +44,7 @@ class Timmy:
                     raw_array = sound.get_raw()
                     raw_array = raw_array[415000:430000]
                     cut_sound = pg.mixer.Sound(buffer=raw_array)
+                    cut_sound.set_volume(1)
                     cut_sound.play()
         if press == K_s:
             if isinstance(item, House):
@@ -69,6 +71,8 @@ class Timmy:
                 item.sail(draw_user_on_x, self.island)
                 self.x = variables.ISLAND_CENTER[0]
                 variables.RAFT_PIECES = 0
+                sailing = True
+        return sailing
             #SAIL MY BODY
     def stop(self):
         self.movement_speed = 0
