@@ -22,6 +22,7 @@ class Island:
         self.items = items
         variables.DAY = 1
         variables.LEVEL = 1
+        variables.RAFT_PIECES = 0
         self.villager = Timmy(self)
         # Number of trees
         # This will ensure that the sum will always be the same for each run
@@ -29,22 +30,18 @@ class Island:
 
     def new_level(self):
         self.items = []
+        if variables.LEVEL == 5:
+            return
         variables.ISLAND_WIDTH = variables.LEVEL_ISLAND_SIZE[variables.LEVEL-1]
-        if variables.LEVEL == 1:
-            n = np.random.randint(5,15)
-        else:
-            n = variables.LEVEL_TREES_RESSOURCES[variables.LEVEL-1] // 10
+        n = variables.LEVEL_TREES[variables.LEVEL-1]
         sizes = np.random.multinomial(variables.LEVEL_TREES_RESSOURCES[variables.LEVEL-1], np.ones(n)/n, size=1)[0]
-        part1_trees = np.linspace(variables.ISLAND_WIDTH//2-variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//3, variables.ISLAND_CENTER[0]-100, n//2)
-        part2_trees = np.linspace(variables.ISLAND_CENTER[0]+100, variables.ISLAND_WIDTH//2+variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//10, n//2)
+        part1_trees = np.linspace(variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//3, variables.ISLAND_CENTER[0]-100, n//2)
+        part2_trees = np.linspace(variables.ISLAND_CENTER[0]+100, variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//3, n//2)
         trees_pos = np.hstack((part1_trees,part2_trees))
         for s,x in zip(sizes, trees_pos):
             self.items.append(Tree(s, x))
         self.items.append(House())
-        if variables.LEVEL == 5:
-            #This will be the end. so play the end screen
-            #TODO: Make the final level screen
-            ...
+
         self.bkg = pg.image.load(self.background_image)
         self.isl = pg.image.load(self.island_image)
         variables.RAFT_MIN_SIZE = variables.LEVEL_RAFT[variables.LEVEL-1]
@@ -90,12 +87,12 @@ class Island:
                     contains_tree = True
         if not has_worked:
             self.villager.work(press)
-        if not contains_tree and (variables.CURRENT_RESSOURCES < variables.RAFT_COST or variables.RAFT_PIECES < variables.RAFT_MIN_SIZE):
+        if not contains_tree and (variables.CURRENT_RESSOURCES < variables.RAFT_COST and variables.RAFT_PIECES < variables.RAFT_MIN_SIZE):
             return "No more trees left. Plan your ressources more cautios"
         return ""
     
     def sleep(self):
-        cycle = np.hstack((np.linspace(51,150,150),np.linspace(150,51,150)))
+        cycle = np.hstack((np.linspace(51,150,100),np.linspace(150,51,100)))
         for i,v in enumerate(cycle):
             color = np.asarray(self.background_color)
             color += int(v)
@@ -130,15 +127,16 @@ class Island:
             pg.draw.circle(self.screen, sun_color, (sun_x, sun_y), sun_width)
             self.screen.blit(filt, (0, 0))
 
-            pg.time.delay(5)
+            pg.time.delay(3)
             pg.display.flip()
         variables.ISLAND_WIDTH -= variables.ISLAND_DECAY
         for i in self.items:
             x,_ = i.get_pos()
-            if variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//2 >= x >= variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//2:
+            if variables.ISLAND_CENTER[0]+variables.ISLAND_WIDTH//3 >= x >= variables.ISLAND_CENTER[0]-variables.ISLAND_WIDTH//3:
                 i.life += random.randint(1,4)
             else:
                 i.life = 0
+                self.items.remove(i)
         variables.DAY += 1
     
     

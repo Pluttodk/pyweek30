@@ -16,7 +16,7 @@ RAFT_HEIGHT = 50
 RAFT_SPACING = 1
 RAFT_MIN_SIZE = 4
 
-RANGE = 20
+RANGE = 5
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 500
 
@@ -27,9 +27,9 @@ DAY = 1
 LEVEL = 1
 
 LEVEL_RAFT = [4,8,12,16] # Leaving for a total number of ress = 400
-LEVEL_TREES = [6,4,2,1]
-LEVEL_TREES_RESSOURCES = [200,80,60,50] # The number of trees ressources to be available from the begining (This will mean that you will have to farm all at first level. Even though that grows during night)
-LEVEL_ISLAND_SIZE = [800,600,400,200]
+LEVEL_TREES = [8,6,4,2]
+LEVEL_TREES_RESSOURCES = [200,120,80,50] # The number of trees ressources to be available from the begining (This will mean that you will have to farm all at first level. Even though that grows during night)
+LEVEL_ISLAND_SIZE = [800,600,400,300]
 
 FRAME_COUNT = 0
 

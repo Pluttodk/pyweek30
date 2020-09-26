@@ -27,7 +27,7 @@ class Raft:
     def calc_nearest_object(self, x):
         diff = abs(x-(self.x+(self.pieces*self.width)))
         diff2 = abs(x-self.x)
-        if (diff <= variables.RANGE or diff2 <= variables.RANGE) and self.pieces > 0:
+        if self.x-variables.RANGE <= x <= (self.x+(self.pieces*self.width))+variables.RANGE and self.pieces > 0:
             return self
         else:
             return None

@@ -39,6 +39,11 @@ class Timmy:
                     variables.CURRENT_STAMINA = self.stamina
                     item.work()
                     variables.CURRENT_RESSOURCES += 1
+                    sound = pg.mixer.Sound("sounds/wood-hit.wav")
+                    raw_array = sound.get_raw()
+                    raw_array = raw_array[415000:430000]
+                    cut_sound = pg.mixer.Sound(buffer=raw_array)
+                    cut_sound.play()
         if press == K_s:
             if isinstance(item, House):
                 #Sleep:
@@ -82,15 +87,9 @@ class Timmy:
             self.move()
         self.screen.blit(self.timmy_sprite, (self.x, self.y), self.movement_sprite)
         # pg.draw.circle(screen, (0,0,0), (self.x, self.y), 20)
-        if self.x >= variables.ISLAND_CENTER[0]+(variables.ISLAND_WIDTH//2)+(variables.RAFT_WIDTH*variables.RAFT_PIECES) or self.x <= variables.ISLAND_CENTER[0]-(variables.ISLAND_WIDTH//2):
-            self.x = variables.TIMMY_CENTER[0]
-            self.stamina -= 5
-            variables.CURRENT_STAMINA = self.stamina
-            if self.stamina <= 0:
-                self.die()
-                print("Watch out for the water. Timmy can only swim if he has Stamina")
-                return "Watch out for the water. Timmy can only swim if he has Stamina"
-            self.stop()
+        if (self.x+16*self.scale_factor) >= variables.ISLAND_CENTER[0]+(variables.ISLAND_WIDTH//2)+(variables.RAFT_WIDTH*variables.RAFT_PIECES*2) or self.x <= variables.ISLAND_CENTER[0]-(variables.ISLAND_WIDTH//2):
+            self.die()
+            return "Watch out for the water. Timmy can only swim if he has Stamina"
         self.x += self.movement_speed
         return ""
     

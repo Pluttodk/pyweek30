@@ -37,8 +37,7 @@ class Tree:
         return self.life <= 0
     
     def calc_nearest_object(self, x):
-        diff = abs(x-self.x)
-        if diff <= variables.RANGE:
+        if self.x-variables.RANGE <= x <= self.x+self.texture.get_rect().width+variables.RANGE:
             return self
         else:
             return None

@@ -17,16 +17,10 @@ class House:
         self.house_sprite = pg.image.load("sprites/house.png")
     
     def draw(self, screen, is_sailing=False):
-        x1 = self.x
-        x2 = self.x - self.width // 2
-        x3 = self.x - self.width
-        y1 = self.y - self.height
-        y2 = int(self.y - self.height * 1.5)
-        y3 = self.y - self.height
+
         #Draw roof
         screen.blit(self.house_sprite, (self.x, self.y))
-        # pg.draw.rect(screen, self.color_base, (self.x-self.width, self.y-self.height, self.width, self.height))
-        # pg.draw.polygon(screen, self.color_roof, [[x1,y1],[x2,y2],[x3,y3]])
+        
         if self.raft != None and not is_sailing:
             self.raft.draw(screen)
 
@@ -49,8 +43,7 @@ class House:
         return (self.x+self.house_sprite.get_rect().width//2, self.y+self.house_sprite.get_rect().height//2)
     
     def calc_nearest_object(self, x):
-        diff = abs(x-self.x)
-        if diff <= variables.RANGE:
+        if self.x-variables.RANGE <= x <= (self.x+self.house_sprite.get_rect().width)+variables.RANGE:
             return self
         elif self.raft != None:
             return self.raft.calc_nearest_object(x)
